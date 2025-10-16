@@ -148,13 +148,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.tabs = QtWidgets.QTabWidget(); v.addWidget(self.tabs, 1)
         self.dashboard = Dashboard(); self.tabs.addTab(self.dashboard, "Dashboard")
 
-<<<<<<< HEAD
-        baro_fields=[("Pressure","hPa"),("Altitude (baro)","m"),("Temperature","C")]
-        temp_fields=[("Temperature","C"),("Humidity","%"),("Sensor Status","")]
-=======
         baro_fields=[("Pressure","hPa"),("Altitude (baro)","m"),("Temperature","°C")]
         temp_fields=[("Temperature","°C"),("Sensor Status","")]
->>>>>>> b234c3d421457bc9bdda67edfa4d5c3a9976e961
         gps_fields =[("Latitude","deg"),("Longitude","deg"),("Altitude","m"),("Fix Type",""),("Sats Used",""),("HDOP",""),("UTC Time","")]
         sdr_fields =[("Frequency","Hz"),("Doppler","Hz"),("SNR","dB-Hz"),("RSSI","dBm"),("Bandwidth","kHz"),("Constellation","")]
         imu_fields =[("Yaw","deg"),("Pitch","deg"),("Roll","deg")]
@@ -199,10 +194,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.timer.stop()
 
-<<<<<<< HEAD
-=======
-    # ---- UDP Listener (Port 9999 - matches backend.py) ----
->>>>>>> b234c3d421457bc9bdda67edfa4d5c3a9976e961
     def start_udp(self):
         if self.udp_listener is not None:
             return
@@ -386,32 +377,15 @@ class SerialReaderFlexible(QtCore.QThread):
                             except:
                                 return None
 
-<<<<<<< HEAD
-=======
-                        # GPS - always send if we have valid lat/lon
->>>>>>> b234c3d421457bc9bdda67edfa4d5c3a9976e961
                         lat, lon = f("lat"), f("lon")
                         alt = f("gps_alt_m")
                         fix = "3D" if row.get("fix","0") not in ("0","NA") else "No Fix"
                         sats = int(float(row.get("sats","0"))) if str(row.get("sats","0")).replace('.','',1).isdigit() else 0
                         hdop = f("hdop")
                         if lat is not None and lon is not None:
-<<<<<<< HEAD
-                            self.got_packet.emit({"sensor":"gps","lat":lat,"lon":lon,"alt":alt or 0.0,
-                                                  "fix":fix,"sats":sats,"hdop":hdop or 0.0,"time":"UTC"})
-                        self.got_packet.emit({"sensor":"baro",
-                                              "pressure_hpa": f("bmp_pres_hpa") or 0.0,
-                                              "alt_m": f("bmp_alt_m") or 0.0,
-                                              "temp_c": f("bmp_temp_c") or 0.0})
-                        self.got_packet.emit({"sensor":"temp",
-                                              "temp_c": f("bmp_temp_c") or 0.0,
-                                              "humidity": 0,
-                                              "status":"OK"})
-=======
                             self.got_packet.emit({"sensor":"gps","lat":lat,"lon":lon,"alt":alt if alt is not None else 0.0,
                                                   "fix":fix,"sats":sats,"hdop":hdop if hdop is not None else 0.0,"time":"UTC"})
 
-                        # Barometer - always send pressure data
                         bmp_pres = f("bmp_pres_hpa")
                         bmp_alt = f("bmp_alt_m")
                         bmp_temp = f("bmp_temp_c")
@@ -421,14 +395,11 @@ class SerialReaderFlexible(QtCore.QThread):
                                                   "alt_m": bmp_alt if bmp_alt is not None else 0.0,
                                                   "temp_c": bmp_temp if bmp_temp is not None else 0.0})
 
-                        # Temperature sensor (separate from baro temp)
                         if bmp_temp is not None:
                             self.got_packet.emit({"sensor":"temp",
                                                   "temp_c": bmp_temp,
                                                   "status":"OK"})
 
-                        # IMU (Yaw/Pitch/Roll) - always send if any value is present
->>>>>>> b234c3d421457bc9bdda67edfa4d5c3a9976e961
                         yd, pd, rd = f("yaw_deg"), f("pitch_deg"), f("roll_deg")
                         if (yd is not None) or (pd is not None) or (rd is not None):
                             self.got_packet.emit({"sensor":"imu",
